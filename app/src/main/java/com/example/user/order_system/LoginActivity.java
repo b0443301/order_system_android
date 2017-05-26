@@ -3,6 +3,7 @@ package com.example.user.order_system;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -145,6 +146,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * errors are presented and no actual login attempt is made.
      */
     private void attemptLogin() {
+        Intent intent = new Intent(LoginActivity.this,UserinterfaceActivity.class);
+        startActivity(intent);
+
+
         if (mAuthTask != null) {
             return;
         }

@@ -28,7 +28,23 @@
         <activity
             android:name=".RegisterActivity"
             android:label="@string/title_activity_main"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".UserinterfaceActivity"
+            android:label="@string/title_activity_userinterface"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ItemDetailActivity"
+            android:label="@string/title_item_detail"
+            android:parentActivityName=".ItemListActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.user.order_system.ItemListActivity" />
+        </activity>
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings"></activity>
     </application>
 
 </manifest>

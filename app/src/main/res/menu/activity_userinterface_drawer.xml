@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/orderperson"
+            android:icon="@drawable/ic_menu_camera"
+            android:title="訂餐者" />
+        <item
+            android:id="@+id/strore"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="店家" />
+        <item
+            android:id="@+id/feeder"
+            android:icon="@drawable/ic_menu_slideshow"
+            android:title="訂餐員" />
+        <item
+            android:id="@+id/setting"
+            android:icon="@drawable/ic_menu_slideshow"
+            android:title="設定" />
+    </group>
+
+    <item
+        android:id="@+id/setting"
+        android:title="communication">
+        <menu>
+            <item
+                android:id="@+id/nav_share"
+                android:icon="@drawable/ic_menu_share"
+                android:title="Share" />
+            <item
+                android:id="@+id/nav_send"
+                android:icon="@drawable/ic_menu_send"
+                android:title="Send" />
+        </menu>
+    </item>
+
+</menu>

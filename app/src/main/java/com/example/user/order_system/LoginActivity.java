@@ -29,6 +29,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,7 +60,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     // UI references.
     private AutoCompleteTextView mAccounrView;
-    private EditText mPasswordView;
+    private AutoCompleteTextView mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
     TextView forgotpassTV;
@@ -70,17 +71,16 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         setContentView(R.layout.activity_login);
         // Set up the login form.
         mAccounrView = (AutoCompleteTextView) findViewById(R.id.account);
+        mPasswordView = (AutoCompleteTextView) findViewById(R.id.password);
         populateAutoComplete();
-        forgotpassTV =(TextView)findViewById(R.id.forgotpassTV);
-        mPasswordView = (EditText) findViewById(R.id.password);
-        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+
+        forgotpassTV = (TextView) findViewById(R.id.forgotpassTV);
+        forgotpassTV.setOnClickListener(new OnClickListener() {
             @Override
-            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == R.id.login || id == EditorInfo.IME_NULL) {
-                    attemptLogin();
-                    return true;
+            public void onClick(View v) {
+                if (mAccounrView.getText().toString().isEmpty()) {
+                    Toast.makeText(LoginActivity.this, "請輸入帳號", Toast.LENGTH_LONG).show();
                 }
-                return false;
             }
         });
 
@@ -146,10 +146,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * errors are presented and no actual login attempt is made.
      */
     private void attemptLogin() {
-        Intent intent = new Intent(LoginActivity.this,UserinterfaceActivity.class);
-        startActivity(intent);
-
-
         if (mAuthTask != null) {
             return;
         }
@@ -159,26 +155,22 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mPasswordView.setError(null);
 
         // Store values at the time of the login attempt.
-        String email = mAccounrView.getText().toString();
+        String account = mAccounrView.getText().toString();
         String password = mPasswordView.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
 
         // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
-            mPasswordView.setError(getString(R.string.error_invalid_password));
+        if (password.isEmpty()) {
+            mPasswordView.setError(getString(R.string.error_field_required));
             focusView = mPasswordView;
             cancel = true;
         }
 
         // Check for a valid email address.
-        if (TextUtils.isEmpty(email)) {
+        if (account.isEmpty()) {
             mAccounrView.setError(getString(R.string.error_field_required));
-            focusView = mAccounrView;
-            cancel = true;
-        } else if (!isEmailValid(email)) {
-            mAccounrView.setError(getString(R.string.error_invalid_email));
             focusView = mAccounrView;
             cancel = true;
         }
@@ -191,19 +183,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
+            mAuthTask = new UserLoginTask(account, password);
             mAuthTask.execute((Void) null);
         }
-    }
-
-    private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
-        return email.contains("@");
-    }
-
-    private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
-        return password.length() > 4;
     }
 
     /**

@@ -29,9 +29,6 @@ public class UserinterfaceActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private boolean mTwoPane;
 
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

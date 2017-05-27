@@ -42,7 +42,6 @@ import java.util.List;
 
 import static android.Manifest.permission.READ_CONTACTS;
 import static com.example.user.order_system.R.id.account;
-import static com.example.user.order_system.R.id.password;
 
 /**
  * A login screen that offers login via email/password.
@@ -151,7 +150,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
     }
 
-
     /**
      * Attempts to sign in or register the account specified by the login form.
      * If there are form errors (invalid email, missing fields, etc.), the
@@ -193,7 +191,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // perform the user login attempt.
             showProgress(true);
             mAuthTask = new UserLoginTask(account, password);
-            mAuthTask.execute((Void) null);
+            mAuthTask.execute();
         }
     }
 
@@ -276,7 +274,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mAccounrView.setAdapter(adapter);
     }
 
-
     private interface ProfileQuery {
         String[] PROJECTION = {
                 ContactsContract.CommonDataKinds.Email.ADDRESS,
@@ -294,7 +291,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         private final String mAccount;
         private final String mPassword;
 
-        UserLoginTask(String account, String password) {
+        UserLoginTask(String account, String password) {//建構子
             mAccount = account;
             mPassword = password;
         }

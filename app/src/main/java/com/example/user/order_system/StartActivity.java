@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Toast;
 
 import org.apache.http.HttpEntity;
@@ -20,17 +21,18 @@ import java.io.IOException;
 public class StartActivity extends AppCompatActivity {
     String url = "http://192.168.0.156/index.php?";
     String json = "", version = "";
+    BackGroundWorker backGroundWorker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
 
-        BackGroundWorker backGroundWorker = new BackGroundWorker();
+        backGroundWorker = new BackGroundWorker();
         backGroundWorker.execute();
     }
 
-    private class BackGroundWorker extends AsyncTask<Void, Integer, Void> {
+    private class BackGroundWorker extends AsyncTask<Void, Void, Void> {
         // <傳入參數, 處理中更新介面參數, 處理後傳出參數>
         @Override
         protected Void doInBackground(Void... arg0) {
@@ -50,15 +52,15 @@ public class StartActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onProgressUpdate(Integer... value) {
-            // TODO Auto-generated method stub
+        protected void onProgressUpdate(Void... value) {
             super.onProgressUpdate(value);
             // 背景工作處理"中"更新的事
         }
 
         @Override
-        protected void onPostExecute(Void result) {
-            super.onPostExecute(result);
+        protected void onPostExecute(Void value) {
+            super.onPostExecute(value);
+            backGroundWorker = null;
             // 背景工作處理完後需作的事
             try {
                 JSONObject jsonObject = new JSONObject(json);
@@ -67,7 +69,7 @@ public class StartActivity extends AppCompatActivity {
                 e.printStackTrace();
             } finally {
                 if (version.isEmpty()) {
-                    Toast.makeText(StartActivity.this, "伺服器沒有回應", Toast.LENGTH_LONG).show();
+                    Toast.makeText(StartActivity.this, "無法連線伺服器", Toast.LENGTH_LONG).show();
                 } else if (version.equals(getResources().getString(R.string.app_ver))) {
                     Intent intent = new Intent(StartActivity.this, LoginActivity.class);
                     startActivity(intent);

@@ -19,22 +19,30 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
-import android.text.TextUtils;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import static android.Manifest.permission.READ_CONTACTS;
+import static com.example.user.order_system.R.id.account;
+import static com.example.user.order_system.R.id.password;
 
 /**
  * A login screen that offers login via email/password.
@@ -47,13 +55,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private static final int REQUEST_READ_CONTACTS = 0;
 
     /**
-     * A dummy authentication store containing known user names and passwords.
-     * TODO: remove after connecting to a real authentication system.
-     */
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "foo@example.com:hello", "bar@example.com:world"
-    };
-    /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
     private UserLoginTask mAuthTask = null;
@@ -64,13 +65,18 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private View mProgressView;
     private View mLoginFormView;
     TextView forgotpassTV;
+    boolean cancel = false;
+    View focusView = null;
+
+    String json = "", result = "", session = "";
+    String url = "http://192.168.0.156/index.php?";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         // Set up the login form.
-        mAccounrView = (AutoCompleteTextView) findViewById(R.id.account);
+        mAccounrView = (AutoCompleteTextView) findViewById(account);
         mPasswordView = (AutoCompleteTextView) findViewById(R.id.password);
         populateAutoComplete();
 
@@ -79,7 +85,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             @Override
             public void onClick(View v) {
                 if (mAccounrView.getText().toString().isEmpty()) {
-                    Toast.makeText(LoginActivity.this, "請輸入帳號", Toast.LENGTH_LONG).show();
+                    // Reset errors.
+                    mAccounrView.setError(null);
+                    mPasswordView.setError(null);
+
+                    mAccounrView.setError(getString(R.string.error_field_required_account));
+                    mAccounrView.requestFocus();
+                    //Toast.makeText(LoginActivity.this, getString(R.string.error_field_required_account), Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -158,19 +170,16 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         String account = mAccounrView.getText().toString();
         String password = mPasswordView.getText().toString();
 
-        boolean cancel = false;
-        View focusView = null;
-
         // Check for a valid password, if the user entered one.
         if (password.isEmpty()) {
-            mPasswordView.setError(getString(R.string.error_field_required));
+            mPasswordView.setError(getString(R.string.error_field_required_password));
             focusView = mPasswordView;
             cancel = true;
         }
 
         // Check for a valid email address.
         if (account.isEmpty()) {
-            mAccounrView.setError(getString(R.string.error_field_required));
+            mAccounrView.setError(getString(R.string.error_field_required_account));
             focusView = mAccounrView;
             cancel = true;
         }
@@ -275,63 +284,74 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         };
 
         int ADDRESS = 0;
-        int IS_PRIMARY = 1;
     }
 
     /**
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
-
-        private final String mEmail;
+    public class UserLoginTask extends AsyncTask<Void, Void, Void> {
+        private final String mAccount;
         private final String mPassword;
 
-        UserLoginTask(String email, String password) {
-            mEmail = email;
+        UserLoginTask(String account, String password) {
+            mAccount = account;
             mPassword = password;
         }
 
         @Override
-        protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
+        protected Void doInBackground(Void... params) {
+            HttpClient httpClient = new DefaultHttpClient();
+            HttpGet get = new HttpGet(url + "command=login&account=" + mAccount + "&password=" + mPassword);
+            try {
+                HttpResponse response = httpClient.execute(get);
+                HttpEntity entity = response.getEntity();
+                json = EntityUtils.toString(entity);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                httpClient.getConnectionManager().shutdown();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Void value) {
+            super.onPostExecute(value);
 
             try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return false;
-            }
+                JSONObject jsonObject = new JSONObject(json);
+                result = jsonObject.getString("result");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            } finally {
+                mAuthTask = null;
+                showProgress(false);
 
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
+                if (result.isEmpty()) {
+                    Toast.makeText(LoginActivity.this, "無法連線伺服器", Toast.LENGTH_LONG).show();
+                } else if (result.equals("login_success")) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(json);
+                        session = jsonObject.getString("session");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    } finally {
+                        Toast.makeText(LoginActivity.this, "歡迎", Toast.LENGTH_LONG).show();
+                        Intent intent = new Intent(LoginActivity.this, UserinterfaceActivity.class);
+                        intent.putExtra("session",session);
+                        startActivity(intent);
+                    }
+                } else if (result.equals("login_fail")) {
+                    Toast.makeText(LoginActivity.this, "密碼錯誤", Toast.LENGTH_LONG).show();
+                } else if (result.equals("login_need_register")) {
+                    Toast.makeText(LoginActivity.this, "請先註冊", Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+                    intent.putExtra("account",mAccount);
+                    intent.putExtra("password",mPassword);
+                    startActivity(intent);
                 }
             }
-
-            // TODO: register the new account here.
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean success) {
-            mAuthTask = null;
-            showProgress(false);
-
-            if (success) {
-                finish();
-            } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-            mAuthTask = null;
-            showProgress(false);
         }
     }
 }

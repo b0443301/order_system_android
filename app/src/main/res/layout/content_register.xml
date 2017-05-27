@@ -43,8 +43,8 @@
                 android:id="@+id/passwordACTV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="password"
-                android:inputType="textEmailAddress"
+                android:hint="Password"
+                android:inputType="textPassword"
                 android:maxLines="1"
                 android:singleLine="true" />
 
@@ -59,10 +59,11 @@
 
             <AutoCompleteTextView
                 android:id="@+id/checkpassACTV"
+                style="@style/TextAppearance.Design.Hint"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="newpassword"
-                android:inputType="textEmailAddress"
+                android:hint="Checkpassword"
+                android:inputType="textPassword"
                 android:maxLines="1"
                 android:singleLine="true" />
 
@@ -79,7 +80,7 @@
                 android:id="@+id/usernameACTV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="username"
+                android:hint="Username"
                 android:inputType="textEmailAddress"
                 android:maxLines="1"
                 android:singleLine="true" />
@@ -97,8 +98,8 @@
                 android:id="@+id/teleACTV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="telephone"
-                android:inputType="textEmailAddress"
+                android:hint="Telephone"
+                android:inputType="number"
                 android:maxLines="1"
                 android:singleLine="true" />
 
@@ -115,8 +116,8 @@
                 android:id="@+id/emailACTV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="email"
-                android:inputType="textEmailAddress"
+                android:hint="Email"
+                android:inputType="textWebEmailAddress"
                 android:maxLines="1"
                 android:singleLine="true" />
 
@@ -133,7 +134,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Address"
-                android:inputType="textEmailAddress"
+                android:inputType="text"
                 android:maxLines="1"
                 android:singleLine="true" />
 

@@ -98,6 +98,16 @@ public class UserinterfaceActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            if(menuItem.getTitle().equals("管理訂餐資訊")){
+                Intent intent = new Intent(UserinterfaceActivity.this,OrderInfoActivity.class);
+                startActivity(intent);
+            }else if(menuItem.getTitle().equals("管理店面資訊")){
+                Intent intent = new Intent(UserinterfaceActivity.this,StoreMainActivity.class);
+                startActivity(intent);
+            }else if(menuItem.getTitle().equals("管理員工資訊")){
+                Intent intent = new Intent(UserinterfaceActivity.this,FeederMainActivity.class);
+                startActivity(intent);
+            }
             return true;
         }
 

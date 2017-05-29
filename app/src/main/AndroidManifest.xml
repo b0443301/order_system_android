@@ -46,7 +46,7 @@
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings" />
         <activity
-            android:name=".EmployeeInfoMainActivity"
+            android:name=".OrderInfoActivity"
             android:label="@string/title_activity_employee_info_main"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity

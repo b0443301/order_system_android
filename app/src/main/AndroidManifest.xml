@@ -36,15 +36,27 @@
         <activity
             android:name=".ItemDetailActivity"
             android:label="@string/title_item_detail"
-            android:parentActivityName=".ItemListActivity"
+            android:parentActivityName=".UserinterfaceActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.user.order_system.ItemListActivity" />
+                android:value="com.example.user.order_system.UserinterfaceActivity" />
         </activity>
         <activity
             android:name=".SettingsActivity"
-            android:label="@string/title_activity_settings"></activity>
+            android:label="@string/title_activity_settings" />
+        <activity
+            android:name=".EmployeeInfoMainActivity"
+            android:label="@string/title_activity_employee_info_main"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".StoreMainActivity"
+            android:label="@string/title_activity_store_main"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".FeederMainActivity"
+            android:label="@string/title_activity_feeder_main"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

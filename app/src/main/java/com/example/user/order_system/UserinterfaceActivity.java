@@ -28,7 +28,8 @@ import java.util.List;
 public class UserinterfaceActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private boolean mTwoPane;
-
+    Menu menu;
+    MenuItem menuItem;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,6 +84,8 @@ public class UserinterfaceActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.userinterface, menu);
+        this.menu = menu;
+        menuItem = menu.findItem(R.id.action_settings);
         return true;
     }
 
@@ -108,18 +111,22 @@ public class UserinterfaceActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.orderperson) {
+            UserinterfaceActivity.this.setTitle("訂餐者");
+            menuItem.setTitle("管理訂餐資訊");
+        }
+        if (id == R.id.strore) {
+            UserinterfaceActivity.this.setTitle("店家");
+            menuItem.setTitle("管理店面資訊");
+        }
+        if (id == R.id.feeder) {
+            UserinterfaceActivity.this.setTitle("送餐員");
+            menuItem.setTitle("管理員工資訊");
+        }
+        if (id == R.id.setting) {
+            Intent intent = new Intent(UserinterfaceActivity.this, SettingsActivity.class);
+            startActivity(intent);
 
-
-            // Handle the camera action
-        }  if (id == R.id.strore) {
-
-        }  if (id == R.id.feeder) {
-
-        }  if (id == R.id.setting) {
-            Intent intent = new Intent(UserinterfaceActivity.this,SettingsActivity.class);
-             startActivity(intent);
-
-       }
+        }
 // else if (id == R.id.nav_share) {
 //
 //        } else if (id == R.id.nav_send) {

@@ -106,7 +106,7 @@
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_title_vibrate">Vibrate</string>
-    <string name="title_activity_employee_info_main">EmployeeInfoMainActivity</string>
-    <string name="title_activity_store_main">StoreMainActivity</string>
-    <string name="title_activity_feeder_main">FeederMainActivity</string>
+    <string name="title_activity_employee_info_main">訂餐管理系統</string>
+    <string name="title_activity_store_main">店家管理系統</string>
+    <string name="title_activity_feeder_main">員工管理系統</string>
 </resources>

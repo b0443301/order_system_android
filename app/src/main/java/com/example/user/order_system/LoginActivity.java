@@ -336,7 +336,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     } finally {
                         Toast.makeText(LoginActivity.this, "歡迎", Toast.LENGTH_LONG).show();
                         Intent intent = new Intent(LoginActivity.this, UserinterfaceActivity.class);
-                        intent.putExtra("session",session);
+                        intent.putExtra("session", session);
+                        intent.putExtra("account", mAccount);
                         startActivity(intent);
                     }
                 } else if (result.equals("login_fail")) {
@@ -344,8 +345,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 } else if (result.equals("login_need_register")) {
                     Toast.makeText(LoginActivity.this, "請先註冊", Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
-                    intent.putExtra("account",mAccount);
-                    intent.putExtra("password",mPassword);
+                    intent.putExtra("account", mAccount);
+                    intent.putExtra("password", mPassword);
                     startActivity(intent);
                 }
             }

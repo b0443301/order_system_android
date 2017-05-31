@@ -2,6 +2,7 @@ package com.example.user.order_system;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -23,6 +24,16 @@ import android.widget.Toast;
 
 import com.example.user.order_system.dummy.DummyContent;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.List;
 
 public class UserinterfaceActivity extends AppCompatActivity
@@ -30,6 +41,8 @@ public class UserinterfaceActivity extends AppCompatActivity
     private boolean mTwoPane;
     Menu menu;
     MenuItem menuItem;
+    String session = "", mAccount = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +53,10 @@ public class UserinterfaceActivity extends AppCompatActivity
         View recyclerView = findViewById(R.id.item_list);
         assert recyclerView != null;
         setupRecyclerView((RecyclerView) recyclerView);
+
+        Intent intent = UserinterfaceActivity.this.getIntent();
+        session = intent.getStringExtra("session");
+        mAccount = intent.getStringExtra("account");
 
         if (findViewById(R.id.item_detail_container) != null) {
             // The detail container view will be present only in the
@@ -98,14 +115,16 @@ public class UserinterfaceActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            if(menuItem.getTitle().equals("管理訂餐資訊")){
-                Intent intent = new Intent(UserinterfaceActivity.this,OrderInfoActivity.class);
+            if (menuItem.getTitle().equals("管理訂餐資訊")) {
+                Intent intent = new Intent(UserinterfaceActivity.this, OrderInfoActivity.class);
+                intent.putExtra("session", session);
+                intent.putExtra("account", mAccount);
                 startActivity(intent);
-            }else if(menuItem.getTitle().equals("管理店面資訊")){
-                Intent intent = new Intent(UserinterfaceActivity.this,StoreMainActivity.class);
+            } else if (menuItem.getTitle().equals("管理店面資訊")) {
+                Intent intent = new Intent(UserinterfaceActivity.this, StoreMainActivity.class);
                 startActivity(intent);
-            }else if(menuItem.getTitle().equals("管理員工資訊")){
-                Intent intent = new Intent(UserinterfaceActivity.this,FeederMainActivity.class);
+            } else if (menuItem.getTitle().equals("管理員工資訊")) {
+                Intent intent = new Intent(UserinterfaceActivity.this, FeederMainActivity.class);
                 startActivity(intent);
             }
             return true;
@@ -221,3 +240,6 @@ public class UserinterfaceActivity extends AppCompatActivity
         }
     }
 }
+
+
+

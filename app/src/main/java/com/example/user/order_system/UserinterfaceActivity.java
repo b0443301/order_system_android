@@ -122,9 +122,13 @@ public class UserinterfaceActivity extends AppCompatActivity
                 startActivity(intent);
             } else if (menuItem.getTitle().equals("管理店面資訊")) {
                 Intent intent = new Intent(UserinterfaceActivity.this, StoreMainActivity.class);
+                intent.putExtra("session", session);
+                intent.putExtra("account", mAccount);
                 startActivity(intent);
             } else if (menuItem.getTitle().equals("管理員工資訊")) {
                 Intent intent = new Intent(UserinterfaceActivity.this, FeederMainActivity.class);
+                intent.putExtra("session", session);
+                intent.putExtra("account", mAccount);
                 startActivity(intent);
             }
             return true;

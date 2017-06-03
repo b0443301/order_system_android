@@ -77,12 +77,12 @@ public class FeederMainActivity extends AppCompatActivity {
                 e.printStackTrace();
             } finally {
                 if (result.equals("select_feeder_fail")) {
-                    Toast.makeText(FeederMainActivity.this, "select__fail", Toast.LENGTH_LONG).show();
-                } else if (result.equals("select_user_not_found")) {
-                    Toast.makeText(FeederMainActivity.this, "select_user_not_found", Toast.LENGTH_LONG).show();
+                    Toast.makeText(FeederMainActivity.this, "select_feeder__fail", Toast.LENGTH_LONG).show();
+                } else if (result.equals("select_feeder_not_found")) {
+                    Toast.makeText(FeederMainActivity.this, "select_feeder_not_found", Toast.LENGTH_LONG).show();
 
-                } else if (result.equals("select_user_success")) {
-                    Toast.makeText(FeederMainActivity.this, "select_user_success", Toast.LENGTH_LONG).show();
+                } else if (result.equals("select_feeder_success")) {
+                    Toast.makeText(FeederMainActivity.this, "select_feeder_success", Toast.LENGTH_LONG).show();
                     try {
                         JSONObject jsonObject = new JSONObject(json);
                         storename = jsonObject.getString("storename");

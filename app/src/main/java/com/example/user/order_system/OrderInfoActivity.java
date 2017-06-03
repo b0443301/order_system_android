@@ -32,12 +32,30 @@ public class OrderInfoActivity extends AppCompatActivity {
 
     String url = "http://192.168.0.156/index.php?";
     String json = "";
-    SelectUserData selectUserData;
+    SelectUserData selectUserData;//新增搜尋功能
     UpdataUserData updataUserData;
     TextView accountTV;
     AutoCompleteTextView emailACTV, usernameACTV, teleACTV, addressACTV;
     Menu menu;
     MenuItem menuItem;
+//
+//    final static class SocketState {
+//        static final int close = 0;
+//        static final int open = 1;
+//        static final int connect = 2;
+//        static final int disconnect = 3;
+//    }
+//
+//    static final int ok = 0;
+//
+//    final class FileState {
+//        final int close = 0;
+//        final int open = 1;
+//        final int read = 2;
+//        final int write = 3;
+//    }
+
+    //int socketState = SocketState.close;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,8 +78,30 @@ public class OrderInfoActivity extends AppCompatActivity {
 
         selectUserData = new SelectUserData();
         selectUserData.execute();
+        SelectUserData selectUserData01 = new SelectUserData();
+        selectUserData.execute();
+        SelectUserData selectUserData02 = new SelectUserData();
+        selectUserData.execute();
 
-       // Integer.MAX_VALUE
+//        SocketState test = new SocketState();
+//        FileState file = new FileState();
+
+        // Integer.MAX_VALUE
+
+//        ok = 10;
+//
+//        switch (socketState) {
+//            case SocketState.close:
+//                break;
+//            case SocketState.open:
+//                break;
+//            case SocketState.connect:
+//                break;
+//            case SocketState.disconnect:
+//                break;
+//            default:
+//                break;
+//        }
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -81,9 +121,9 @@ public class OrderInfoActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_settings) {//
             if (menuItem.getTitle().equals("存檔")) {
-                mail = emailACTV.getText().toString();
+                mail = emailACTV.getText().toString();//將mailACTV字串拿到的資料給mail,之後再給
                 username = usernameACTV.getText().toString();
                 telephone = teleACTV.getText().toString();
                 address = addressACTV.getText().toString();
@@ -98,11 +138,11 @@ public class OrderInfoActivity extends AppCompatActivity {
     private class SelectUserData extends AsyncTask<Void, Void, Void> {
         // <傳入參數, 處理中更新介面參數, 處理後傳出參數>
         @Override
-        protected Void doInBackground(Void... arg0) {
+        protected Void doInBackground(Void... arg0) {//建立跟網頁的連線
             // 在背景中處理的耗時工作
             HttpClient httpClient = new DefaultHttpClient();
             HttpGet get = new HttpGet(url + "command=select_user&account=" + mAccount);
-            try {
+            try {//json的制式寫法
                 HttpResponse response = httpClient.execute(get);
                 HttpEntity entity = response.getEntity();
                 json = EntityUtils.toString(entity);
@@ -119,14 +159,14 @@ public class OrderInfoActivity extends AppCompatActivity {
             super.onPostExecute(value);
             selectUserData = null;
             // 背景工作處理完後需作的事
-            try {
+            try {//例外處理
                 JSONObject jsonObject = new JSONObject(json);
                 result = jsonObject.getString("result");
             } catch (JSONException e) {
                 e.printStackTrace();
-            } finally {
-                if (result.equals("select_user_fail")) {
-                    Toast.makeText(OrderInfoActivity.this, "select_user_fail", Toast.LENGTH_LONG).show();
+            } finally {//一定會執行
+                if (result.equals("select_user_fail")) {//hotcode寫法
+                    Toast.makeText(OrderInfoActivity.this, "select_user_fail", Toast.LENGTH_LONG).show();//網頁顯示select_user_fail
                 } else if (result.equals("select_user_not_found")) {
                     Toast.makeText(OrderInfoActivity.this, "select_user_not_found", Toast.LENGTH_LONG).show();
 
@@ -135,8 +175,8 @@ public class OrderInfoActivity extends AppCompatActivity {
                     try {
                         JSONObject jsonObject = new JSONObject(json);
 
-                        mail = jsonObject.getString("mail");
-                        username = jsonObject.getString("username");
+                        mail = jsonObject.getString("mail");//從作業系統拿mail資料要設成全域變數,不然要設成區域變數<void void void>
+                        username = jsonObject.getString("username");//資料庫把最新的資料纏回U/I上顯示
                         telephone = jsonObject.getString("telephone");
                         address = jsonObject.getString("address");
                     } catch (JSONException e) {
@@ -183,7 +223,7 @@ public class OrderInfoActivity extends AppCompatActivity {
             } catch (JSONException e) {
                 e.printStackTrace();
             } finally {
-                if (result.equals("update_user_fail")) {
+                if (result.equals("update_user_fail")) {//資料庫確認資料有無更新成功
                     Toast.makeText(OrderInfoActivity.this, "update_user_fail", Toast.LENGTH_LONG).show();
                 } else if (result.equals("update_user_not_found")) {
                     Toast.makeText(OrderInfoActivity.this, "update_user_not_found", Toast.LENGTH_LONG).show();

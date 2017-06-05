@@ -103,7 +103,7 @@ public class OrderInfoActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.userinterface, menu);
         this.menu = menu;
         menuItem = menu.findItem(R.id.action_settings);
-        menuItem.setTitle("存檔");
+        menuItem.setTitle(getResources().getString(R.string.menuItem_save));
         return true;
     }
 
@@ -116,7 +116,7 @@ public class OrderInfoActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {//
-            if (menuItem.getTitle().equals("存檔")) {
+            if (menuItem.getTitle().equals(getResources().getString(R.string.menuItem_save))) {
                 mail = emailACTV.getText().toString();//將mailACTV字串拿到的資料給mail,之後再給
                 username = usernameACTV.getText().toString();
                 telephone = teleACTV.getText().toString();

@@ -1,7 +1,5 @@
 package com.example.user.order_system;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -61,8 +59,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     // UI references.
     private AutoCompleteTextView mAccounrView;
     private AutoCompleteTextView mPasswordView;
-    private View mProgressView;
-    private View mLoginFormView;
     TextView forgotpassTV;
     boolean cancel = false;
     View focusView = null;
@@ -102,9 +98,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 attemptLogin();
             }
         });
-
-        mLoginFormView = findViewById(R.id.login_form);
-        mProgressView = findViewById(R.id.login_progress);
     }
 
     private void populateAutoComplete() {
@@ -189,45 +182,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
-            showProgress(true);
             mAuthTask = new UserLoginTask(account, password);
             mAuthTask.execute();
-        }
-    }
-
-    /**
-     * Shows the progress UI and hides the login form.
-     */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
-    private void showProgress(final boolean show) {
-        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
-        // for very easy animations. If available, use these APIs to fade-in
-        // the progress spinner.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
-
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-            mLoginFormView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-                }
-            });
-
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mProgressView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-                }
-            });
-        } else {
-            // The ViewPropertyAnimator APIs are not available, so simply show
-            // and hide the relevant UI components.
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
         }
     }
 
@@ -323,31 +279,30 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 e.printStackTrace();
             } finally {
                 mAuthTask = null;
-                showProgress(false);
 
-                if (result.isEmpty()) {
-                    Toast.makeText(LoginActivity.this, "無法連線伺服器", Toast.LENGTH_LONG).show();
-                } else if (result.equals("login_success")) {
+                if (result.equals("login_success")) {
                     try {
                         JSONObject jsonObject = new JSONObject(json);
                         session = jsonObject.getString("session");
                     } catch (JSONException e) {
                         e.printStackTrace();
                     } finally {
-                        Toast.makeText(LoginActivity.this, "歡迎", Toast.LENGTH_LONG).show();
+                        Toast.makeText(LoginActivity.this, "login_success", Toast.LENGTH_LONG).show();
                         Intent intent = new Intent(LoginActivity.this, UserinterfaceActivity.class);
                         intent.putExtra("session", session);
                         intent.putExtra("account", mAccount);
                         startActivity(intent);
+                        LoginActivity.this.finish();
                     }
                 } else if (result.equals("login_fail")) {
-                    Toast.makeText(LoginActivity.this, "密碼錯誤", Toast.LENGTH_LONG).show();
+                    Toast.makeText(LoginActivity.this, "login_fail", Toast.LENGTH_LONG).show();
                 } else if (result.equals("login_need_register")) {
-                    Toast.makeText(LoginActivity.this, "請先註冊", Toast.LENGTH_LONG).show();
+                    Toast.makeText(LoginActivity.this, "login_need_register", Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
                     intent.putExtra("account", mAccount);
                     intent.putExtra("password", mPassword);
                     startActivity(intent);
+                    LoginActivity.this.finish();
                 }
             }
         }

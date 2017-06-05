@@ -31,7 +31,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".UserinterfaceActivity"
-            android:label="@string/title_activity_userinterface"
+            android:label="@string/order"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ItemDetailActivity"
@@ -57,6 +57,10 @@
             android:name=".FeederMainActivity"
             android:label="@string/title_activity_feeder_main"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".DinnerActivity"
+            android:label="@string/title_activity_dinner"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

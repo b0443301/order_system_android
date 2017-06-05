@@ -1,53 +1,66 @@
 <resources>
-    <string name="app_name">order_system</string>
+    <string name="app_name">訂餐系統</string>
     <string name="app_ver">v1.0</string>
-    <string name="title_activity_login">Sign in</string>
+    <string name="title_activity_login">登入</string>
 
     <!-- Strings related to login -->
-    <string name="prompt_email">Account</string>
-    <string name="prompt_password">Password</string>
-    <string name="action_sign_in">Sign in or register</string>
-    <string name="action_sign_in_short">Sign in</string>
-    <string name="error_invalid_email">This email address is invalid</string>
-    <string name="error_invalid_password">This password is too short</string>
-    <string name="error_incorrect_password">This password is incorrect</string>
-    <string name="permission_rationale">"Contacts permissions are needed for providing email
-        completions."
-    </string>
+    <string name="prompt_email">帳號</string>
+    <string name="prompt_password">密碼</string>
+    <string name="action_sign_in">登入或註冊</string>
+    <string name="permission_rationale">"需要權限"</string>
+
+    <string name="content_register_Password">註冊密碼</string>
+    <string name="content_register_Checkpassword">再次確認註冊密碼</string>
+    <string name="content_register_Mail">註冊e-mail</string>
+    <string name="content_register_Username">註冊名稱</string>
+    <string name="content_register_Telephone">註冊電話</string>
+    <string name="content_register_Address">註冊地址</string>
+
+
     <string name="error_field_required_account">請輸入帳號</string>
     <string name="error_field_required_password">請輸入密碼</string>
     <string name="error_field_required_checkpass">請再次輸入密碼</string>
     <string name="error_field_required_username">請輸入姓名</string>
     <string name="error_field_required_telephone">請輸入電話</string>
-    <string name="error_field_required_email">請輸入郵件</string>
     <string name="error_field_required_address">請輸入地址</string>
+    <string name="error_field_required_email">請輸入郵件</string>
+    <string name="content_order_info_Account">訂餐者帳號</string>
+    <string name="content_order_info_Address">訂餐者地址</string>
+    <string name="content_order_info_Telephone">訂餐者電話</string>
+    <string name="content_order_info_Username">訂餐者名稱</string>
+    <string name="content_order_info_Mail">訂餐者e-mail</string>
+    <string name="please_check_password">請核對密碼</string>
+
+    <string name="menu_Item_info">管理訂餐資訊</string>
+    <string name="store_Item_info">管理店面資訊</string>
+    <string name="employee_Item_info">管理員工資訊</string>
+    <string name="order">訂餐者</string>
+    <string name="store">店家</string>
+    <string name="feeder">送餐員</string>
+
 
     <string name="app_forgot_pass">忘記密碼</string>
-    <string name="title_activity_register">registerActivity</string>
     <string name="title_activity_main">會員註冊</string>
-    <string name="title_activity_userinterface">使用者</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="action_settings">Settings</string>
-    <string name="title_item_list">Items</string>
-    <string name="title_item_detail">Item Detail</string>
-    <string name="title_activity_settings">Settings</string>
+    <string name="action_settings">設定</string>
+    <string name="title_item_detail">項目細節</string>
+    <string name="title_activity_settings">設定</string>
 
-    <!-- Strings related to Settings -->
+    <string name="content_store_info_name">店家名稱</string>
+    <string name="content_store_info_Address">店家地址</string>
+    <string name="content_store_info_Telephone">店家電話</string>
 
     <!-- Example General settings -->
     <string name="pref_header_general">General</string>
-
     <string name="pref_title_social_recommendations">Enable social recommendations</string>
     <string name="pref_description_social_recommendations">Recommendations for people to contact
         based on your message history
     </string>
-
     <string name="pref_title_display_name">Display name</string>
     <string name="pref_default_display_name">John Smith</string>
-
     <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
     <string-array name="pref_example_list_titles">
         <item>Always</item>
@@ -62,7 +75,6 @@
 
     <!-- Example settings for Data & Sync -->
     <string name="pref_header_data_sync">Data &amp; sync</string>
-
     <string name="pref_title_sync_frequency">Sync frequency</string>
     <string-array name="pref_sync_frequency_titles">
         <item>15 minutes</item>
@@ -80,33 +92,26 @@
         <item>360</item>
         <item>-1</item>
     </string-array>
-
     <string-array name="list_preference_entries">
         <item>Entry 1</item>
         <item>Entry 2</item>
         <item>Entry 3</item>
     </string-array>
-
-    <string-array name="list_preference_entry_values">
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-    </string-array>
-
-    <string-array name="multi_select_list_preference_default_value" />
-
-    <string name="pref_title_system_sync_settings">System sync settings</string>
+    <string name="pref_title_system_sync_settings">系統同步設定</string>
 
     <!-- Example settings for Notifications -->
-    <string name="pref_header_notifications">Notifications</string>
+    <string name="pref_header_notifications">通知</string>
+    <string name="pref_title_new_message_notifications">新訊息通知</string>
+    <string name="pref_title_ringtone">鈴聲</string>
+    <string name="pref_ringtone_silent">靜音</string>
+    <string name="pref_title_vibrate">震動</string>
 
-    <string name="pref_title_new_message_notifications">New message notifications</string>
-
-    <string name="pref_title_ringtone">Ringtone</string>
-    <string name="pref_ringtone_silent">Silent</string>
-
-    <string name="pref_title_vibrate">Vibrate</string>
     <string name="title_activity_employee_info_main">訂餐管理系統</string>
     <string name="title_activity_store_main">店家管理系統</string>
     <string name="title_activity_feeder_main">員工管理系統</string>
+    <string name="content_activity_feeder_hint">店家名稱</string>
+    <string name="menuItem_save">存檔</string>
+    <string name="title_activity_dinner">DinnerActivity</string>
+
+
 </resources>

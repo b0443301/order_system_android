@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -71,6 +72,7 @@ public class StoreMainActivity extends AppCompatActivity {
                 AutoCompleteTextView name = new AutoCompleteTextView(StoreMainActivity.this);
                 itemlayout.addView(name);
                 AutoCompleteTextView price = new AutoCompleteTextView(StoreMainActivity.this);
+                price.setInputType(InputType.TYPE_CLASS_NUMBER);
                 itemlayout.addView(price);
 
                 nameACTVList.add(name);//新增nameACYV裡的值,在存檔
@@ -84,7 +86,7 @@ public class StoreMainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.userinterface, menu);
         this.menu = menu;
         menuItem = menu.findItem(R.id.action_settings);
-        menuItem.setTitle("存檔");
+        menuItem.setTitle(getResources().getString(R.string.menuItem_save));
         return true;
     }
 
@@ -98,7 +100,7 @@ public class StoreMainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            if (menuItem.getTitle().equals("存檔")) {
+            if (menuItem.getTitle().equals(getResources().getString(R.string.menuItem_save))) {
 //                for (int i = 0; i < name; i++) {
 //                    name = name.get(i);
 //
@@ -164,7 +166,8 @@ public class StoreMainActivity extends AppCompatActivity {
                     Toast.makeText(StoreMainActivity.this, "select_store_fail", Toast.LENGTH_LONG).show();
                 } else if (result.equals("select_store_user_not_found")) {
                     Toast.makeText(StoreMainActivity.this, "select_store_user_not_found", Toast.LENGTH_LONG).show();
-
+                } else if (result.equals("select_store_no_data")) {
+                    Toast.makeText(StoreMainActivity.this, "select_store_no_data", Toast.LENGTH_LONG).show();
                 } else if (result.equals("select_store_success")) {
                     Toast.makeText(StoreMainActivity.this, "select_store_success", Toast.LENGTH_LONG).show();
                     try {
@@ -245,6 +248,8 @@ public class StoreMainActivity extends AppCompatActivity {
                     Toast.makeText(StoreMainActivity.this, "update_store_user_not_found", Toast.LENGTH_LONG).show();
                 } else if (result.equals("update_store_success")) {
                     Toast.makeText(StoreMainActivity.this, "update_store_success", Toast.LENGTH_LONG).show();
+                } else if (result.equals("update_store_new_data")) {
+                    Toast.makeText(StoreMainActivity.this, "update_store_new_data", Toast.LENGTH_LONG).show();
                 }
             }
         }

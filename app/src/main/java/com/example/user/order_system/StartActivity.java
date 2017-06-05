@@ -72,6 +72,7 @@ public class StartActivity extends AppCompatActivity {
                 } else if (version.equals(getResources().getString(R.string.app_ver))) {
                     Intent intent = new Intent(StartActivity.this, LoginActivity.class);
                     startActivity(intent);
+                    StartActivity.this.finish();
                 } else {
                     Toast.makeText(StartActivity.this, "版本過低，請更新APP", Toast.LENGTH_LONG).show();
                 }

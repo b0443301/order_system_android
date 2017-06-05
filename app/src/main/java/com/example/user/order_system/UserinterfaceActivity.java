@@ -30,6 +30,7 @@ public class UserinterfaceActivity extends AppCompatActivity
     Menu menu;
     MenuItem menuItem;
     String session = "", mAccount = "";
+    FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,9 +39,9 @@ public class UserinterfaceActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        View recyclerView = findViewById(R.id.item_list);
-        assert recyclerView != null;
-        setupRecyclerView((RecyclerView) recyclerView);
+//        View recyclerView = findViewById(R.id.item_list);
+//        assert recyclerView != null;
+//        setupRecyclerView((RecyclerView) recyclerView);
 
         Intent intent = UserinterfaceActivity.this.getIntent();
         session = intent.getStringExtra("session");
@@ -54,12 +55,14 @@ public class UserinterfaceActivity extends AppCompatActivity
             mTwoPane = true;
         }
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+                Intent intent = new Intent(UserinterfaceActivity.this, DinnerActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -71,6 +74,7 @@ public class UserinterfaceActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        navigationView.getMenu().getItem(0).setChecked(true);//預設畫面是訂餐者
     }
 
     @Override
@@ -101,17 +105,17 @@ public class UserinterfaceActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            if (menuItem.getTitle().equals("管理訂餐資訊")) {
+            if (menuItem.getTitle().equals(getString(R.string.menu_Item_info))) {
                 Intent intent = new Intent(UserinterfaceActivity.this, OrderInfoActivity.class);
                 intent.putExtra("session", session);
                 intent.putExtra("account", mAccount);
                 startActivity(intent);
-            } else if (menuItem.getTitle().equals("管理店面資訊")) {
+            } else if (menuItem.getTitle().equals(getString(R.string.store_Item_info))) {
                 Intent intent = new Intent(UserinterfaceActivity.this, StoreMainActivity.class);
                 intent.putExtra("session", session);
                 intent.putExtra("account", mAccount);
                 startActivity(intent);
-            } else if (menuItem.getTitle().equals("管理員工資訊")) {
+            } else if (menuItem.getTitle().equals(getString(R.string.employee_Item_info))) {
                 Intent intent = new Intent(UserinterfaceActivity.this, FeederMainActivity.class);
                 intent.putExtra("session", session);
                 intent.putExtra("account", mAccount);
@@ -129,16 +133,19 @@ public class UserinterfaceActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.orderperson) {
-            UserinterfaceActivity.this.setTitle("訂餐者");
-            menuItem.setTitle("管理訂餐資訊");
+            UserinterfaceActivity.this.setTitle(getString(R.string.order));
+            menuItem.setTitle(getString(R.string.menu_Item_info));
+            fab.setVisibility(View.VISIBLE);
         }
         if (id == R.id.strore) {
-            UserinterfaceActivity.this.setTitle("店家");
-            menuItem.setTitle("管理店面資訊");
+            UserinterfaceActivity.this.setTitle(getString(R.string.store));
+            menuItem.setTitle(getString(R.string.store_Item_info));
+            fab.setVisibility(View.INVISIBLE);
         }
         if (id == R.id.feeder) {
-            UserinterfaceActivity.this.setTitle("送餐員");
-            menuItem.setTitle("管理員工資訊");
+            UserinterfaceActivity.this.setTitle(getString(R.string.feeder));
+            menuItem.setTitle(getString(R.string.employee_Item_info));
+            fab.setVisibility(View.INVISIBLE);
         }
         if (id == R.id.setting) {
             Intent intent = new Intent(UserinterfaceActivity.this, SettingsActivity.class);

@@ -53,7 +53,7 @@ public class FeederMainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.userinterface, menu);
         this.menu = menu;
         menuItem = menu.findItem(R.id.action_settings);
-        menuItem.setTitle("存檔");
+        menuItem.setTitle(getResources().getString(R.string.menuItem_save));
         return true;
     }
 
@@ -66,7 +66,7 @@ public class FeederMainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            if (menuItem.getTitle().equals("存檔")) {
+            if (menuItem.getTitle().equals(getResources().getString(R.string.menuItem_save))) {
                 storename = storenameACTV.getText().toString();
                 updataUserData = new UpdataUserData();
                 updataUserData.execute();
@@ -82,7 +82,7 @@ public class FeederMainActivity extends AppCompatActivity {
         protected Void doInBackground(Void... arg0) {//再backgroundworker建立連線
             // 在背景中處理的耗時工作
             HttpClient httpClient = new DefaultHttpClient();
-            HttpGet get = new HttpGet(url + "command=select_store&account=" + mAccount);
+            HttpGet get = new HttpGet(url + "command=select_feeder&account=" + mAccount);
             try {
                 HttpResponse response = httpClient.execute(get);
                 HttpEntity entity = response.getEntity();

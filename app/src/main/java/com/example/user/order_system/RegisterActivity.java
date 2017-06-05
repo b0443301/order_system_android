@@ -1,11 +1,7 @@
 package com.example.user.order_system;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -30,8 +26,6 @@ public class RegisterActivity extends AppCompatActivity {
     String json = "", result = "", session = "";
     String url = "http://192.168.0.156/index.php?";
     BackGroundWorker backGroundWorker;
-    View mProgressView;
-    View mRegisterView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,8 +41,6 @@ public class RegisterActivity extends AppCompatActivity {
         usernameACTV = (AutoCompleteTextView) findViewById(R.id.usernameACTV);
         teleACTV = (AutoCompleteTextView) findViewById(R.id.teleACTV);
         addressACTV = (AutoCompleteTextView) findViewById(R.id.addressACTV);
-        mProgressView = findViewById(R.id.progressBar);
-        mRegisterView = findViewById(R.id.registerView);
 
         Intent intent = RegisterActivity.this.getIntent();
         accountACTV.setText(intent.getStringExtra("account"));
@@ -88,7 +80,7 @@ public class RegisterActivity extends AppCompatActivity {
                     addressACTV.setError(getString(R.string.error_field_required_address));
                     addressACTV.requestFocus();
                 } else if (!passwordACTV.getText().toString().equals(checkpassACTV.getText().toString())) {
-                    checkpassACTV.setError("請核對密碼");
+                    checkpassACTV.setError(getString(R.string.please_check_password));
                     checkpassACTV.requestFocus();
                 } else {
                     RegisterData registerData = new RegisterData();
@@ -101,46 +93,9 @@ public class RegisterActivity extends AppCompatActivity {
 
                     backGroundWorker = new BackGroundWorker(registerData);
                     backGroundWorker.execute();
-
-                    showProgress(true);
                 }
             }
         });
-    }
-
-    /**
-     * Shows the progress UI and hides the login form.
-     */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
-    private void showProgress(final boolean show) {
-        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
-        // for very easy animations. If available, use these APIs to fade-in
-        // the progress spinner.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
-            mRegisterView.setVisibility(show ? View.GONE : View.VISIBLE);
-            mRegisterView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mRegisterView.setVisibility(show ? View.GONE : View.VISIBLE);
-                }
-            });
-
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mProgressView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-                }
-            });
-        } else {
-            // The ViewPropertyAnimator APIs are not available, so simply show
-            // and hide the relevant UI components.
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mRegisterView.setVisibility(show ? View.GONE : View.VISIBLE);
-        }
     }
 
     private class BackGroundWorker extends AsyncTask<Void, Void, Void> {
@@ -197,7 +152,6 @@ public class RegisterActivity extends AppCompatActivity {
                 e.printStackTrace();
             } finally {
                 backGroundWorker = null;
-                showProgress(false);
 
                 if (result.equals("register_success")) {
                     try {
@@ -209,13 +163,14 @@ public class RegisterActivity extends AppCompatActivity {
                         Intent intent = new Intent(RegisterActivity.this, UserinterfaceActivity.class);
                         intent.putExtra("session", session);
                         intent.putExtra("account", registerData.mAccount);
-                        Toast.makeText(RegisterActivity.this, "歡迎", Toast.LENGTH_LONG).show();
+                        Toast.makeText(RegisterActivity.this, "register_success", Toast.LENGTH_LONG).show();
                         startActivity(intent);
+                        RegisterActivity.this.finish();
                     }
                 } else if (result.equals("register_same_account")) {
-                    Toast.makeText(RegisterActivity.this, "已經有相同帳號", Toast.LENGTH_LONG).show();
+                    Toast.makeText(RegisterActivity.this, "register_same_account", Toast.LENGTH_LONG).show();
                 } else if (result.equals("register_fail")) {
-                    Toast.makeText(RegisterActivity.this, "錯誤", Toast.LENGTH_LONG).show();
+                    Toast.makeText(RegisterActivity.this, "register_fail", Toast.LENGTH_LONG).show();
                 }
             }
         }

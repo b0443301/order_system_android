@@ -52,7 +52,7 @@
                 android:id="@+id/passwordACTV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Password"
+                android:hint="@string/content_register_Password"
                 android:inputType="textPassword"
                 android:maxLines="1"
                 android:singleLine="true" />
@@ -71,7 +71,7 @@
                 style="@style/TextAppearance.Design.Hint"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Checkpassword"
+                android:hint="@string/content_register_Checkpassword"
                 android:inputType="textPassword"
                 android:maxLines="1"
                 android:singleLine="true" />
@@ -89,8 +89,8 @@
                 android:id="@+id/emailACTV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Mail"
-                android:inputType="text"
+                android:hint="@string/content_register_Mail"
+                android:inputType="textEmailAddress"
                 android:maxLines="1"
                 android:singleLine="true" />
 
@@ -107,7 +107,7 @@
                 android:id="@+id/usernameACTV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Username"
+                android:hint="@string/content_register_Username"
                 android:inputType="text"
                 android:maxLines="1"
                 android:singleLine="true" />
@@ -125,8 +125,8 @@
                 android:id="@+id/teleACTV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Telephone"
-                android:inputType="number"
+                android:hint="@string/content_register_Telephone"
+                android:inputType="phone"
                 android:maxLines="1"
                 android:singleLine="true" />
 
@@ -142,7 +142,7 @@
                 android:id="@+id/addressACTV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Address"
+                android:hint="@string/content_register_Address"
                 android:inputType="text"
                 android:maxLines="1"
                 android:singleLine="true" />

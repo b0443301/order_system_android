@@ -3,13 +3,10 @@ package com.example.user.order_system;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,8 +23,6 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 public class OrderInfoActivity extends AppCompatActivity {
-
-
     String session = "", mAccount = "", result = "", mail = "", username = "", telephone = "", address = "";
 
     String url = "http://192.168.0.156/index.php?";
@@ -70,7 +65,6 @@ public class OrderInfoActivity extends AppCompatActivity {
         teleACTV = (AutoCompleteTextView) findViewById(R.id.teleACTV);
         addressACTV = (AutoCompleteTextView) findViewById(R.id.addressACTV);
 
-
         Intent intent = OrderInfoActivity.this.getIntent();
         session = intent.getStringExtra("session");
         mAccount = intent.getStringExtra("account");
@@ -78,10 +72,10 @@ public class OrderInfoActivity extends AppCompatActivity {
 
         selectUserData = new SelectUserData();
         selectUserData.execute();
-        SelectUserData selectUserData01 = new SelectUserData();
-        selectUserData.execute();
-        SelectUserData selectUserData02 = new SelectUserData();
-        selectUserData.execute();
+//        SelectUserData selectUserData01 = new SelectUserData();
+//        selectUserData.execute();
+//        SelectUserData selectUserData02 = new SelectUserData();
+//        selectUserData.execute();
 
 //        SocketState test = new SocketState();
 //        FileState file = new FileState();
@@ -165,7 +159,7 @@ public class OrderInfoActivity extends AppCompatActivity {
             } catch (JSONException e) {
                 e.printStackTrace();
             } finally {//一定會執行
-                if (result.equals("select_user_fail")) {//hotcode寫法
+                if (result.equals("select_user_fail")) {//hardcode寫法
                     Toast.makeText(OrderInfoActivity.this, "select_user_fail", Toast.LENGTH_LONG).show();//網頁顯示select_user_fail
                 } else if (result.equals("select_user_not_found")) {
                     Toast.makeText(OrderInfoActivity.this, "select_user_not_found", Toast.LENGTH_LONG).show();
@@ -227,7 +221,6 @@ public class OrderInfoActivity extends AppCompatActivity {
                     Toast.makeText(OrderInfoActivity.this, "update_user_fail", Toast.LENGTH_LONG).show();
                 } else if (result.equals("update_user_not_found")) {
                     Toast.makeText(OrderInfoActivity.this, "update_user_not_found", Toast.LENGTH_LONG).show();
-
                 } else if (result.equals("update_user_success")) {
                     Toast.makeText(OrderInfoActivity.this, "update_user_success", Toast.LENGTH_LONG).show();
 //                    try {
@@ -246,10 +239,7 @@ public class OrderInfoActivity extends AppCompatActivity {
 //
 //                    }
                 }
-
             }
         }
     }
-
-
 }

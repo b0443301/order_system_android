@@ -8,7 +8,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -25,9 +24,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-
-import static com.example.user.order_system.R.id.account;
-import static com.example.user.order_system.R.id.password;
 
 public class RegisterActivity extends AppCompatActivity {
     AutoCompleteTextView accountACTV, passwordACTV, checkpassACTV, emailACTV, usernameACTV, teleACTV, addressACTV;
@@ -210,9 +206,9 @@ public class RegisterActivity extends AppCompatActivity {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     } finally {
-
                         Intent intent = new Intent(RegisterActivity.this, UserinterfaceActivity.class);
                         intent.putExtra("session", session);
+                        intent.putExtra("account", registerData.mAccount);
                         Toast.makeText(RegisterActivity.this, "歡迎", Toast.LENGTH_LONG).show();
                         startActivity(intent);
                     }

@@ -1,31 +1,16 @@
 package com.example.user.order_system;
 
-import android.content.Context;
 import android.content.Intent;
-import android.icu.text.StringPrepParseException;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.apache.http.HttpEntity;
@@ -40,12 +25,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-
-import static android.R.attr.name;
 
 public class StoreMainActivity extends AppCompatActivity {
     LinearLayout itemlayout;
@@ -73,21 +52,17 @@ public class StoreMainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);//標頭圖形
         setSupportActionBar(toolbar);
 
-
         itemlayout = (LinearLayout) findViewById(R.id.itemlayout);
         storenameACTV = (AutoCompleteTextView) findViewById(R.id.storenameACTV);
         teleACTV = (AutoCompleteTextView) findViewById(R.id.teleACTV);
         addressACTV = (AutoCompleteTextView) findViewById(R.id.addressACTV);
 
-
         Intent intent = StoreMainActivity.this.getIntent();//把封裝好的資料給StoreActivity
         session = intent.getStringExtra("session");//拿裡面的資料用標籤"session"
         mAccount = intent.getStringExtra("account");
 
-
         selectUserData = new SelectUserData();//定義函式搜尋類別
         selectUserData.execute();
-
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -124,7 +99,6 @@ public class StoreMainActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             if (menuItem.getTitle().equals("存檔")) {
-
 //                for (int i = 0; i < name; i++) {
 //                    name = name.get(i);
 //
@@ -202,7 +176,6 @@ public class StoreMainActivity extends AppCompatActivity {
                         for (int i = 0; i < item.length(); i += 2) {//一次進兩位,["Abc","789"]
                             nameList.add(item.getString(i));//一次進兩位,["123"],0,2從開始算
                             priceList.add(item.getString(i + 1));//一次進兩位,["456"],1,3從開始算
-
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -228,7 +201,6 @@ public class StoreMainActivity extends AppCompatActivity {
         }
     }
 
-
     private class UpdataUserData extends AsyncTask<Void, Void, Void> {
         // <傳入參數, 處理中更新介面參數, 處理後傳出參數>
         @Override
@@ -237,13 +209,10 @@ public class StoreMainActivity extends AppCompatActivity {
             String getString = url + "command=update_store&account=" + mAccount + "&storename=" + storename + "&telephone=" + telephone + "&address=" + address;
             for (String e : nameList) {
                 getString = getString + "&name[]=" + e;
-
             }
             for (String e : priceList) {
                 getString = getString + "&price[]=" + e;
-
             }
-
 
             HttpClient httpClient = new DefaultHttpClient();
             HttpGet get = new HttpGet(getString);
@@ -274,14 +243,10 @@ public class StoreMainActivity extends AppCompatActivity {
                     Toast.makeText(StoreMainActivity.this, "update_store_fail", Toast.LENGTH_LONG).show();
                 } else if (result.equals("update_store_user_not_found")) {
                     Toast.makeText(StoreMainActivity.this, "update_store_user_not_found", Toast.LENGTH_LONG).show();
-
                 } else if (result.equals("update_store_success")) {
                     Toast.makeText(StoreMainActivity.this, "update_store_success", Toast.LENGTH_LONG).show();
-
                 }
-
             }
         }
     }
-
 }

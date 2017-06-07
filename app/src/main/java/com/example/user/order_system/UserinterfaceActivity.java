@@ -2,6 +2,7 @@ package com.example.user.order_system;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -18,10 +19,27 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.example.user.order_system.dummy.DummyContent;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.sql.Array;
+import java.util.ArrayList;
 import java.util.List;
 
 public class UserinterfaceActivity extends AppCompatActivity
@@ -29,39 +47,49 @@ public class UserinterfaceActivity extends AppCompatActivity
     private boolean mTwoPane;
     Menu menu;
     MenuItem menuItem;
-    String session = "", mAccount = "";
+    String url = "http://192.168.0.156/index.php?";
+    String json = "", result = "", mAccount = "", session = "";
+    UpdateOrderItemShow updateOrderItemShow;
+    ArrayList<String> storenameList = new ArrayList<>();
+    ArrayList<String> itemList = new ArrayList<>();
+    ArrayList<String> numberList = new ArrayList<>();
+    ArrayList<String> list = new ArrayList<>();
     FloatingActionButton fab;
+
+    private ListView listView;
+    //String[] list ;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_userinterface);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
-//        View recyclerView = findViewById(R.id.item_list);
-//        assert recyclerView != null;
-//        setupRecyclerView((RecyclerView) recyclerView);
 
         Intent intent = UserinterfaceActivity.this.getIntent();
         session = intent.getStringExtra("session");
         mAccount = intent.getStringExtra("account");
 
-        if (findViewById(R.id.item_detail_container) != null) {
-            // The detail container view will be present only in the
-            // large-screen layouts (res/values-w900dp).
-            // If this view is present, then the
-            // activity should be in two-pane mode.
-            mTwoPane = true;
-        }
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+//        if (findViewById(R.id.item_detail_container) != null) {
+//            // The detail container view will be present only in the
+//            // large-screen layouts (res/values-w900dp).
+//            // If this view is present, then the
+//            // activity should be in two-pane mode.
+//            mTwoPane = true;
+//        }
+
+        listView = (ListView) findViewById(R.id.listview);
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
                 Intent intent = new Intent(UserinterfaceActivity.this, DinnerActivity.class);
+                intent.putExtra("account", mAccount);
+                intent.putExtra("session", session);
                 startActivity(intent);
             }
         });
@@ -75,6 +103,9 @@ public class UserinterfaceActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.getMenu().getItem(0).setChecked(true);//預設畫面是訂餐者
+
+        updateOrderItemShow = new UpdateOrderItemShow();
+        updateOrderItemShow.execute();
     }
 
     @Override
@@ -126,7 +157,6 @@ public class UserinterfaceActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
@@ -161,79 +191,97 @@ public class UserinterfaceActivity extends AppCompatActivity
         return true;
     }
 
-    private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        recyclerView.setAdapter(new UserinterfaceActivity.SimpleItemRecyclerViewAdapter(DummyContent.ITEMS));
-    }
+    private class UpdateOrderItemShow extends AsyncTask<Void, Void, Void> {
+        //        String account,storename;
+//        ArrayList<String> itemList,numberList;
+//
+//        OrderDinner(String account, String storename, ArrayList<String> itemList, ArrayList<String> numberList){
+//            this.account = account;
+//            this.storename = storename;
+//            this.itemList = itemList;
+//            this.numberList = numberList;
+//        }
+        // <傳入參數, 處理中更新介面參數, 處理後傳出參數>
+        @Override
+        protected Void doInBackground(Void... arg0) {//再backgroundworker建立連線
+            // 在背景中處理的耗時工作
+            String getString = url + "command=select_dinner_by_account&account=" + mAccount;
+            HttpClient httpClient = new DefaultHttpClient();
+            HttpGet get = new HttpGet(getString);
 
-    public class SimpleItemRecyclerViewAdapter
-            extends RecyclerView.Adapter<UserinterfaceActivity.SimpleItemRecyclerViewAdapter.ViewHolder> {
-
-        private final List<DummyContent.DummyItem> mValues;
-
-        public SimpleItemRecyclerViewAdapter(List<DummyContent.DummyItem> items) {
-            mValues = items;
+            try {
+                HttpResponse response = httpClient.execute(get);
+                HttpEntity entity = response.getEntity();
+                json = EntityUtils.toString(entity);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                httpClient.getConnectionManager().shutdown();
+                return null;
+            }
         }
 
         @Override
-        public UserinterfaceActivity.SimpleItemRecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_list_content, parent, false);
-            return new UserinterfaceActivity.SimpleItemRecyclerViewAdapter.ViewHolder(view);
-        }
+        protected void onPostExecute(Void value) {
+            super.onPostExecute(value);
+            updateOrderItemShow = null;
+            // 背景工作處理完後需作的事
+            try {
+                JSONObject jsonObject = new JSONObject(json);
+                result = jsonObject.getString("result");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            } finally {
+                if (result.equals("select_dinner_by_account_fail")) {//資料庫確認資料有無更新成功
+                    Toast.makeText(UserinterfaceActivity.this, "select_dinner_by_account_fail", Toast.LENGTH_LONG).show();
+                } else if (result.equals("select_dinner_by_account_not_data")) {
+                    Toast.makeText(UserinterfaceActivity.this, "select_dinner_by_account_not_data", Toast.LENGTH_LONG).show();
+                } else if (result.equals("select_dinner_by_account_user_not_found")) {
+                    Toast.makeText(UserinterfaceActivity.this, "select_dinner_by_account_user_not_found", Toast.LENGTH_LONG).show();
+                } else if (result.equals("select_dinner_by_account_success")) {
+                    Toast.makeText(UserinterfaceActivity.this, "select_dinner_by_account_success", Toast.LENGTH_LONG).show();
+                    try {
+                        JSONObject jsonObject = new JSONObject(json);
+                        JSONArray storenameJSON = jsonObject.getJSONArray("storename");
+                        JSONArray itemnameJSON = jsonObject.getJSONArray("itemname");
+                        JSONArray numberJSON = jsonObject.getJSONArray("number");
+                        for (int i = 0; i < storenameJSON.length(); i++) {
+                            storenameList.add(storenameJSON.getString(i));
+                        }
+                        for (int i = 0; i < itemnameJSON.length(); i++) {
+                            itemList.add(itemnameJSON.getString(i));
+                        }
+                        for (int i = 0; i < numberJSON.length(); i++) {
+                            numberList.add(numberJSON.getString(i));
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    } finally {
+                        for (String e : storenameList) {
+                            list.add(e);
+                        }
+                        for (String e : itemList) {
+                            list.add(e);
+                        }
+                        for (String e : numberList) {
+                            list.add(e);
+                        }
 
-        @Override
-        public void onBindViewHolder(final UserinterfaceActivity.SimpleItemRecyclerViewAdapter.ViewHolder holder, int position) {
-            holder.mItem = mValues.get(position);
-            holder.mIdView.setText(mValues.get(position).id);
-            holder.mContentView.setText(mValues.get(position).content);
-
-            holder.mView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (mTwoPane) {
-                        Bundle arguments = new Bundle();
-                        arguments.putString(ItemDetailFragment.ARG_ITEM_ID, holder.mItem.id);
-                        ItemDetailFragment fragment = new ItemDetailFragment();
-                        fragment.setArguments(arguments);
-                        getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.item_detail_container, fragment)
-                                .commit();
-                    } else {
-                        Context context = v.getContext();
-                        Intent intent = new Intent(context, ItemDetailActivity.class);
-                        intent.putExtra(ItemDetailFragment.ARG_ITEM_ID, holder.mItem.id);
-
-                        context.startActivity(intent);
+                        ArrayAdapter<String>  listAdapter = new ArrayAdapter(UserinterfaceActivity.this, android.R.layout.simple_list_item_1, list);
+                        listView.setAdapter(listAdapter);
+                        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                Toast.makeText(getApplicationContext(), "你選擇的是" + list.get(position), Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     }
                 }
-            });
-        }
-
-        @Override
-        public int getItemCount() {
-            return mValues.size();
-        }
-
-        public class ViewHolder extends RecyclerView.ViewHolder {
-            public final View mView;
-            public final TextView mIdView;
-            public final TextView mContentView;
-            public DummyContent.DummyItem mItem;
-
-            public ViewHolder(View view) {
-                super(view);
-                mView = view;
-                mIdView = (TextView) view.findViewById(R.id.id);
-                mContentView = (TextView) view.findViewById(R.id.content);
-            }
-
-            @Override
-            public String toString() {
-                return super.toString() + " '" + mContentView.getText() + "'";
             }
         }
     }
 }
+
 
 
 

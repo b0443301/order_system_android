@@ -36,6 +36,7 @@ public class StoreMainActivity extends AppCompatActivity {
     MenuItem menuItem;
     UpdataUserData updataUserData;
     SelectUserData selectUserData;
+
     // String namelist[] ;
     //String pricelist[] ;
 //    List<String []> name = new ArrayList<>();

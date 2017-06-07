@@ -33,6 +33,7 @@ public class OrderInfoActivity extends AppCompatActivity {
     AutoCompleteTextView emailACTV, usernameACTV, teleACTV, addressACTV;
     Menu menu;
     MenuItem menuItem;
+
 //
 //    final static class SocketState {
 //        static final int close = 0;

@@ -1,5 +1,6 @@
 package com.example.user.order_system;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -28,17 +29,23 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import static com.example.user.order_system.R.id.account;
+
 public class DinnerActivity extends AppCompatActivity {
 
     LinearLayout itemlayout;
     String url = "http://192.168.0.156/index.php?";
-    String json = "", result = "", storename = "";
+    String json = "", result = "", storename = "", mAccount = "", session = "";
     SelectStorenameData selectStorenameData;
     SelectItemData selectItemData;
+    OrderDinner orderDinner;
+
     Spinner spinner;
     ArrayList<String> storenameList = new ArrayList<>();
     ArrayList<String> itemList = new ArrayList<>();
-    ArrayList<EditText> numberEDList = new ArrayList<>();
+    ArrayList<EditText> numberEDList = new ArrayList<>();//將EditText轉為字串拿出來
+
+    ArrayList<String> numberList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +56,10 @@ public class DinnerActivity extends AppCompatActivity {
         itemlayout = (LinearLayout) findViewById(R.id.itemlayout);
         spinner = (Spinner) findViewById(R.id.spinner);
 
+        Intent intent = DinnerActivity.this.getIntent();//把封裝好的資料給StoreActivity
+        session = intent.getStringExtra("session");//拿裡面的資料用標籤"session"
+        mAccount = intent.getStringExtra("account");
+
         selectStorenameData = new SelectStorenameData();//定義函式搜尋類別
         selectStorenameData.execute();
 
@@ -56,7 +67,11 @@ public class DinnerActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                for (EditText e : numberEDList) {
+                    numberList.add(e.getText().toString());
+                }
+                orderDinner = new OrderDinner();
+                orderDinner.execute();
             }
         });
     }
@@ -196,4 +211,77 @@ public class DinnerActivity extends AppCompatActivity {
             }
         }
     }
+
+    private class OrderDinner extends AsyncTask<Void, Void, Void> {
+        //        String account,storename;
+//        ArrayList<String> itemList,numberList;
+//
+//        OrderDinner(String account, String storename, ArrayList<String> itemList, ArrayList<String> numberList){
+//            this.account = account;
+//            this.storename = storename;
+//            this.itemList = itemList;
+//            this.numberList = numberList;
+//        }
+        // <傳入參數, 處理中更新介面參數, 處理後傳出參數>
+        @Override
+        protected Void doInBackground(Void... arg0) {//再backgroundworker建立連線
+            // 在背景中處理的耗時工作
+            String getString = url + "command=order_dinner&account=" + mAccount + "&storename=" + storename;
+            for (int i = 0; i < itemList.size(); i = i + 2) {
+                getString = getString + "&item[]=" + itemList.get(i);
+            }
+            for (String e : numberList) {
+                getString = getString + "&number[]=" + e;
+            }
+
+            HttpClient httpClient = new DefaultHttpClient();
+            HttpGet get = new HttpGet(getString);
+
+            try {
+                HttpResponse response = httpClient.execute(get);
+                HttpEntity entity = response.getEntity();
+                json = EntityUtils.toString(entity);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                httpClient.getConnectionManager().shutdown();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Void value) {
+            super.onPostExecute(value);
+            orderDinner = null;
+            // 背景工作處理完後需作的事
+            try {
+                JSONObject jsonObject = new JSONObject(json);
+                result = jsonObject.getString("result");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            } finally {
+                if (result.equals("order_dinner_fail")) {//資料庫確認資料有無更新成功
+                    Toast.makeText(DinnerActivity.this, "order_dinner_fail", Toast.LENGTH_LONG).show();
+                } else if (result.equals("order_dinner_item_not_found")) {
+                    Toast.makeText(DinnerActivity.this, "order_dinner_item_not_found", Toast.LENGTH_LONG).show();
+                } else if (result.equals("order_dinner_store_not_found")) {
+                    Toast.makeText(DinnerActivity.this, "order_dinner_store_not_found", Toast.LENGTH_LONG).show();}
+                else if (result.equals("order_dinner_user_not_found")) {
+                    Toast.makeText(DinnerActivity.this, "order_dinner_user_not_found", Toast.LENGTH_LONG).show();
+                } else if (result.equals("order_dinner_success")) {
+                    Toast.makeText(DinnerActivity.this, "order_dinner_success", Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(DinnerActivity.this,UserinterfaceActivity.class);
+                    intent.putExtra("session",session);
+                    intent.putExtra("account",mAccount);
+                    startActivity(intent);
+                }
+            }
+        }
+    }
+
+
+
+
+
+
 }

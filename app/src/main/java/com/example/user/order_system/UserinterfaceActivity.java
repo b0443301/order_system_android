@@ -1,13 +1,16 @@
 package com.example.user.order_system;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -21,11 +24,11 @@ import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -49,22 +52,21 @@ public class UserinterfaceActivity extends AppCompatActivity
     MenuItem menuItem;
     String url = "http://192.168.0.156/index.php?";
     String json = "", result = "", mAccount = "", session = "";
-    UpdateOrderItemShow updateOrderItemShow;
+    SelectOrderItemDetail selectOrderItemDetail;
     ArrayList<String> storenameList = new ArrayList<>();
+    ArrayList<String> accountList = new ArrayList<>();
     ArrayList<String> itemList = new ArrayList<>();
     ArrayList<String> numberList = new ArrayList<>();
     ArrayList<String> list = new ArrayList<>();
     FloatingActionButton fab;
+    StoreSelectOrderInfo storeSelectOrderInfo;
 
     private ListView listView;
-    //String[] list ;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_userinterface);
-
 
         Intent intent = UserinterfaceActivity.this.getIntent();
         session = intent.getStringExtra("session");
@@ -79,7 +81,7 @@ public class UserinterfaceActivity extends AppCompatActivity
 //            // If this view is present, then the
 //            // activity should be in two-pane mode.
 //            mTwoPane = true;
-//        }
+//        }0
 
         listView = (ListView) findViewById(R.id.listview);
 
@@ -104,8 +106,8 @@ public class UserinterfaceActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.getMenu().getItem(0).setChecked(true);//預設畫面是訂餐者
 
-        updateOrderItemShow = new UpdateOrderItemShow();
-        updateOrderItemShow.execute();
+        selectOrderItemDetail = new SelectOrderItemDetail();
+        selectOrderItemDetail.execute();
     }
 
     @Override
@@ -166,11 +168,15 @@ public class UserinterfaceActivity extends AppCompatActivity
             UserinterfaceActivity.this.setTitle(getString(R.string.order));
             menuItem.setTitle(getString(R.string.menu_Item_info));
             fab.setVisibility(View.VISIBLE);
+            selectOrderItemDetail = new SelectOrderItemDetail();
+            selectOrderItemDetail.execute();
         }
         if (id == R.id.strore) {
             UserinterfaceActivity.this.setTitle(getString(R.string.store));
             menuItem.setTitle(getString(R.string.store_Item_info));
             fab.setVisibility(View.INVISIBLE);
+            storeSelectOrderInfo = new StoreSelectOrderInfo();
+            storeSelectOrderInfo.execute();
         }
         if (id == R.id.feeder) {
             UserinterfaceActivity.this.setTitle(getString(R.string.feeder));
@@ -191,7 +197,7 @@ public class UserinterfaceActivity extends AppCompatActivity
         return true;
     }
 
-    private class UpdateOrderItemShow extends AsyncTask<Void, Void, Void> {
+    private class SelectOrderItemDetail extends AsyncTask<Void, Void, Void> {
         //        String account,storename;
 //        ArrayList<String> itemList,numberList;
 //
@@ -205,7 +211,7 @@ public class UserinterfaceActivity extends AppCompatActivity
         @Override
         protected Void doInBackground(Void... arg0) {//再backgroundworker建立連線
             // 在背景中處理的耗時工作
-            String getString = url + "command=select_dinner_by_account&account=" + mAccount;
+            String getString = url + "command=select_dinner_for_order&account=" + mAccount;
             HttpClient httpClient = new DefaultHttpClient();
             HttpGet get = new HttpGet(getString);
 
@@ -224,7 +230,7 @@ public class UserinterfaceActivity extends AppCompatActivity
         @Override
         protected void onPostExecute(Void value) {
             super.onPostExecute(value);
-            updateOrderItemShow = null;
+            selectOrderItemDetail = null;
             // 背景工作處理完後需作的事
             try {
                 JSONObject jsonObject = new JSONObject(json);
@@ -232,21 +238,110 @@ public class UserinterfaceActivity extends AppCompatActivity
             } catch (JSONException e) {
                 e.printStackTrace();
             } finally {
-                if (result.equals("select_dinner_by_account_fail")) {//資料庫確認資料有無更新成功
-                    Toast.makeText(UserinterfaceActivity.this, "select_dinner_by_account_fail", Toast.LENGTH_LONG).show();
-                } else if (result.equals("select_dinner_by_account_not_data")) {
-                    Toast.makeText(UserinterfaceActivity.this, "select_dinner_by_account_not_data", Toast.LENGTH_LONG).show();
-                } else if (result.equals("select_dinner_by_account_user_not_found")) {
-                    Toast.makeText(UserinterfaceActivity.this, "select_dinner_by_account_user_not_found", Toast.LENGTH_LONG).show();
-                } else if (result.equals("select_dinner_by_account_success")) {
-                    Toast.makeText(UserinterfaceActivity.this, "select_dinner_by_account_success", Toast.LENGTH_LONG).show();
+                if (result.equals("select_dinner_for_order_fail")) {//資料庫確認資料有無更新成功
+                    Toast.makeText(UserinterfaceActivity.this, "select_dinner_for_order_fail", Toast.LENGTH_LONG).show();
+                } else if (result.equals("select_dinner_for_order_no_data")) {
+                    Toast.makeText(UserinterfaceActivity.this, "select_dinner_for_order_no_data", Toast.LENGTH_LONG).show();
+                } else if (result.equals("select_dinner_for_order_user_not_found")) {
+                    Toast.makeText(UserinterfaceActivity.this, "select_dinner_for_order_user_not_found", Toast.LENGTH_LONG).show();
+                } else if (result.equals("select_dinner_for_order_success")) {
+                    Toast.makeText(UserinterfaceActivity.this, "select_dinner_for_order_success", Toast.LENGTH_LONG).show();
                     try {
                         JSONObject jsonObject = new JSONObject(json);
                         JSONArray storenameJSON = jsonObject.getJSONArray("storename");
                         JSONArray itemnameJSON = jsonObject.getJSONArray("itemname");
                         JSONArray numberJSON = jsonObject.getJSONArray("number");
+
+                        storenameList.clear();
+                        itemList.clear();
+                        numberList.clear();
+
                         for (int i = 0; i < storenameJSON.length(); i++) {
                             storenameList.add(storenameJSON.getString(i));
+                        }
+                        for (int i = 0; i < itemnameJSON.length(); i++) {
+                            itemList.add(itemnameJSON.getString(i));
+                        }
+                        for (int i = 0; i < numberJSON.length(); i++) {
+                            numberList.add(numberJSON.getString(i));
+                        }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    } finally {
+                        list.clear();
+                        for (int i = 0; i < storenameList.size(); i++) {
+                            list.add(storenameList.get(i) + "\n" + itemList.get(i) + "\n" + numberList.get(i));
+                        }
+
+                        ArrayAdapter<String> listAdapter = new ArrayAdapter(UserinterfaceActivity.this, android.R.layout.simple_list_item_1, list);
+                        listView.setAdapter(listAdapter);
+                        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                            }
+                        });
+                    }
+                }
+            }
+        }
+    }
+
+    private class StoreSelectOrderInfo extends AsyncTask<Void, Void, Void> {
+        // <傳入參數, 處理中更新介面參數, 處理後傳出參數>
+        @Override
+        protected Void doInBackground(Void... arg0) {
+            // 在背景中處理的耗時工作
+            String getString = url + "command=select_dinner_for_store&account=" + mAccount;
+            HttpClient httpClient = new DefaultHttpClient();
+            HttpGet get = new HttpGet(getString);
+
+            try {
+                HttpResponse response = httpClient.execute(get);
+                HttpEntity entity = response.getEntity();
+                json = EntityUtils.toString(entity);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                httpClient.getConnectionManager().shutdown();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Void value) {
+            super.onPostExecute(value);
+            storeSelectOrderInfo = null;
+            // 背景工作處理完後需作的事
+            try {
+                JSONObject jsonObject = new JSONObject(json);
+                result = jsonObject.getString("result");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            } finally {
+                if (result.equals("select_dinner_for_store_fail")) {
+                    Toast.makeText(UserinterfaceActivity.this, "select_dinner_for_store_fail", Toast.LENGTH_LONG).show();
+                } else if (result.equals("select_dinner_for_store_no_data")) {
+                    Toast.makeText(UserinterfaceActivity.this, "select_dinner_for_store_no_data", Toast.LENGTH_LONG).show();
+                } else if (result.equals("select_dinner_for_store_user_not_found")) {
+                    Toast.makeText(UserinterfaceActivity.this, "select_dinner_for_store_user_not_found", Toast.LENGTH_LONG).show();
+                } else if (result.equals("select_dinner_for_store_store_not_found")) {
+                    Toast.makeText(UserinterfaceActivity.this, "select_dinner_for_store_store_not_found", Toast.LENGTH_LONG).show();
+                } else if (result.equals("select_dinner_for_store_success")) {
+                    Toast.makeText(UserinterfaceActivity.this, "select_dinner_for_store_success", Toast.LENGTH_LONG).show();
+                    try {
+                        JSONObject jsonObject = new JSONObject(json);
+                        JSONArray accountJSON = jsonObject.getJSONArray("account");
+                        JSONArray itemnameJSON = jsonObject.getJSONArray("itemname");
+                        JSONArray numberJSON = jsonObject.getJSONArray("number");
+
+                        accountList.clear();
+                        itemList.clear();
+                        numberList.clear();
+
+                        for (int i = 0; i < mAccount.length(); i++) {
+                            accountList.add(accountJSON.getString(i));
                         }
                         for (int i = 0; i < itemnameJSON.length(); i++) {
                             itemList.add(itemnameJSON.getString(i));
@@ -257,22 +352,30 @@ public class UserinterfaceActivity extends AppCompatActivity
                     } catch (JSONException e) {
                         e.printStackTrace();
                     } finally {
-                        for (String e : storenameList) {
-                            list.add(e);
+                        list.clear();
+                        for (int i = 0; i < accountList.size(); i++) {
+                            list.add(accountList.get(i) + "\n" + itemList.get(i) + "\n" + numberList.get(i));
                         }
-                        for (String e : itemList) {
-                            list.add(e);
-                        }
-                        for (String e : numberList) {
-                            list.add(e);
-                        }
-
-                        ArrayAdapter<String>  listAdapter = new ArrayAdapter(UserinterfaceActivity.this, android.R.layout.simple_list_item_1, list);
+                        ArrayAdapter<String> listAdapter = new ArrayAdapter(UserinterfaceActivity.this, android.R.layout.simple_list_item_1, list);
                         listView.setAdapter(listAdapter);
                         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                             @Override
                             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                Toast.makeText(getApplicationContext(), "你選擇的是" + list.get(position), Toast.LENGTH_SHORT).show();
+                                new AlertDialog.Builder(UserinterfaceActivity.this)
+                                        .setTitle("細節選單")
+                                        .setMessage(list.get(position))
+                                        .setNeutralButton("離開",
+                                                new DialogInterface.OnClickListener() {
+                                                    public void onClick(DialogInterface dialog,
+                                                                        int which) {
+                                                    }
+                                                })
+                                        .setPositiveButton("結帳", new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog,
+                                                                int which) {
+                                            }
+                                        })
+                                        .show();
                             }
                         });
                     }
@@ -281,7 +384,3 @@ public class UserinterfaceActivity extends AppCompatActivity
         }
     }
 }
-
-
-
-

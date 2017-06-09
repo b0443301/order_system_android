@@ -1,17 +1,11 @@
 package com.example.user.order_system;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.RecyclerView;
-import android.text.InputType;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -21,13 +15,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
-import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.apache.http.HttpEntity;
@@ -41,9 +31,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.sql.Array;
 import java.util.ArrayList;
-import java.util.List;
+
 
 public class UserinterfaceActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -51,15 +40,19 @@ public class UserinterfaceActivity extends AppCompatActivity
     Menu menu;
     MenuItem menuItem;
     String url = "http://192.168.0.156/index.php?";
-    String json = "", result = "", mAccount = "", session = "";
+    String json = "", result = "", mAccount = "", session = "", username = "";
     SelectOrderItemDetail selectOrderItemDetail;
     ArrayList<String> storenameList = new ArrayList<>();
     ArrayList<String> accountList = new ArrayList<>();
+    ArrayList<String> usernameList = new ArrayList<>();
     ArrayList<String> itemList = new ArrayList<>();
     ArrayList<String> numberList = new ArrayList<>();
     ArrayList<String> list = new ArrayList<>();
     FloatingActionButton fab;
     StoreSelectOrderInfo storeSelectOrderInfo;
+    Checkout checkout;
+    int pos = 0;
+
 
     private ListView listView;
 
@@ -142,6 +135,7 @@ public class UserinterfaceActivity extends AppCompatActivity
                 Intent intent = new Intent(UserinterfaceActivity.this, OrderInfoActivity.class);
                 intent.putExtra("session", session);
                 intent.putExtra("account", mAccount);
+                // intent.putExtra("username",username);
                 startActivity(intent);
             } else if (menuItem.getTitle().equals(getString(R.string.store_Item_info))) {
                 Intent intent = new Intent(UserinterfaceActivity.this, StoreMainActivity.class);
@@ -152,6 +146,7 @@ public class UserinterfaceActivity extends AppCompatActivity
                 Intent intent = new Intent(UserinterfaceActivity.this, FeederMainActivity.class);
                 intent.putExtra("session", session);
                 intent.putExtra("account", mAccount);
+
                 startActivity(intent);
             }
             return true;
@@ -290,6 +285,8 @@ public class UserinterfaceActivity extends AppCompatActivity
 
     private class StoreSelectOrderInfo extends AsyncTask<Void, Void, Void> {
         // <傳入參數, 處理中更新介面參數, 處理後傳出參數>
+
+
         @Override
         protected Void doInBackground(Void... arg0) {
             // 在背景中處理的耗時工作
@@ -360,8 +357,9 @@ public class UserinterfaceActivity extends AppCompatActivity
                         listView.setAdapter(listAdapter);
                         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                             @Override
-                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                new AlertDialog.Builder(UserinterfaceActivity.this)
+                            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+                                pos = position;
+                                AlertDialog show = new AlertDialog.Builder(UserinterfaceActivity.this)
                                         .setTitle("細節選單")
                                         .setMessage(list.get(position))
                                         .setNeutralButton("離開",
@@ -373,6 +371,8 @@ public class UserinterfaceActivity extends AppCompatActivity
                                         .setPositiveButton("結帳", new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog,
                                                                 int which) {
+                                                checkout = new Checkout();
+                                                checkout.execute();
                                             }
                                         })
                                         .show();
@@ -383,4 +383,79 @@ public class UserinterfaceActivity extends AppCompatActivity
             }
         }
     }
+
+    class Checkout extends AsyncTask<Void, Void, Void> {
+        // <傳入參數, 處理中更新介面參數, 處理後傳出參數>
+        @Override
+        protected Void doInBackground(Void... arg0) {
+            // 在背景中處理的耗時工作
+            String getString = url + "command=check_dinner_for_store&useraccount=" + accountList.get(pos)
+                    + "&storeaccount=" + mAccount + "&item=" + itemList.get(pos) + "&number=" + numberList.get(pos);
+            HttpClient httpClient = new DefaultHttpClient();
+            HttpGet get = new HttpGet(getString);
+
+            try {
+                HttpResponse response = httpClient.execute(get);
+                HttpEntity entity = response.getEntity();
+                json = EntityUtils.toString(entity);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                httpClient.getConnectionManager().shutdown();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Void value) {
+            super.onPostExecute(value);
+            checkout = null;
+            // 背景工作處理完後需作的事
+            try {
+                JSONObject jsonObject = new JSONObject(json);
+                result = jsonObject.getString("result");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            } finally {
+                if (result.equals("checkout_dinner_for_store_fail")) {
+                    Toast.makeText(UserinterfaceActivity.this, "checkout_dinner_for_store_fail", Toast.LENGTH_LONG).show();
+                } else if (result.equals("checkout_dinner_for_store_no_data")) {
+                    Toast.makeText(UserinterfaceActivity.this, "checkout_dinner_for_store_no_data", Toast.LENGTH_LONG).show();
+                } else if (result.equals("checkout_dinner_for_store_user_not_found")) {
+                    Toast.makeText(UserinterfaceActivity.this, "checkout_dinner_for_store_user_not_found", Toast.LENGTH_LONG).show();
+                } else if (result.equals("checkout_dinner_for_store_store_not_found")) {
+                    Toast.makeText(UserinterfaceActivity.this, "checkout_dinner_for_store_store_not_found", Toast.LENGTH_LONG).show();
+                } else if (result.equals("checkout_dinner_for_store_success")) {
+                    Toast.makeText(UserinterfaceActivity.this, "checkout_dinner_for_store_success", Toast.LENGTH_LONG).show();
+                    list.remove(pos);//把已結帳的菜單品名清除
+                    ArrayAdapter<String> listAdapter = new ArrayAdapter(UserinterfaceActivity.this, android.R.layout.simple_list_item_1, list);
+                    listView.setAdapter(listAdapter);
+                    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+                            pos = position;
+                            AlertDialog show = new AlertDialog.Builder(UserinterfaceActivity.this)
+                                    .setTitle("細節選單")
+                                    .setMessage(list.get(position))
+                                    .setNeutralButton("離開",
+                                            new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog,
+                                                                    int which) {
+                                                }
+                                            })
+                                    .setPositiveButton("結帳", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog,
+                                                            int which) {
+                                            checkout = new Checkout();
+                                            checkout.execute();
+                                        }
+                                    })
+                                    .show();
+                        }
+                    });
+                }
+            }
+        }
+    }
+
 }

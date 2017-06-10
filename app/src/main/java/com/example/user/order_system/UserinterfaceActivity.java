@@ -337,7 +337,7 @@ public class UserinterfaceActivity extends AppCompatActivity
                         itemList.clear();
                         numberList.clear();
 
-                        for (int i = 0; i < mAccount.length(); i++) {
+                        for (int i = 0; i < accountJSON.length(); i++) {
                             accountList.add(accountJSON.getString(i));
                         }
                         for (int i = 0; i < itemnameJSON.length(); i++) {
@@ -389,7 +389,7 @@ public class UserinterfaceActivity extends AppCompatActivity
         @Override
         protected Void doInBackground(Void... arg0) {
             // 在背景中處理的耗時工作
-            String getString = url + "command=check_dinner_for_store&useraccount=" + accountList.get(pos)
+            String getString = url + "command=checkout_dinner_for_store&useraccount=" + accountList.get(pos)
                     + "&storeaccount=" + mAccount + "&item=" + itemList.get(pos) + "&number=" + numberList.get(pos);
             HttpClient httpClient = new DefaultHttpClient();
             HttpGet get = new HttpGet(getString);
@@ -419,15 +419,21 @@ public class UserinterfaceActivity extends AppCompatActivity
             } finally {
                 if (result.equals("checkout_dinner_for_store_fail")) {
                     Toast.makeText(UserinterfaceActivity.this, "checkout_dinner_for_store_fail", Toast.LENGTH_LONG).show();
-                } else if (result.equals("checkout_dinner_for_store_no_data")) {
-                    Toast.makeText(UserinterfaceActivity.this, "checkout_dinner_for_store_no_data", Toast.LENGTH_LONG).show();
+                } else if (result.equals("checkout_dinner_for_store_dinner_not_found")) {
+                    Toast.makeText(UserinterfaceActivity.this, "checkout_dinner_for_store_dinner_not_found", Toast.LENGTH_LONG).show();
                 } else if (result.equals("checkout_dinner_for_store_user_not_found")) {
                     Toast.makeText(UserinterfaceActivity.this, "checkout_dinner_for_store_user_not_found", Toast.LENGTH_LONG).show();
                 } else if (result.equals("checkout_dinner_for_store_store_not_found")) {
                     Toast.makeText(UserinterfaceActivity.this, "checkout_dinner_for_store_store_not_found", Toast.LENGTH_LONG).show();
+                } else if (result.equals("checkout_dinner_for_store_item_not_found")) {
+                    Toast.makeText(UserinterfaceActivity.this, "checkout_dinner_for_store_item_not_found", Toast.LENGTH_LONG).show();
                 } else if (result.equals("checkout_dinner_for_store_success")) {
                     Toast.makeText(UserinterfaceActivity.this, "checkout_dinner_for_store_success", Toast.LENGTH_LONG).show();
                     list.remove(pos);//把已結帳的菜單品名清除
+                    accountList.remove(pos);
+                    itemList.remove(pos);
+                    numberList.remove(pos);
+
                     ArrayAdapter<String> listAdapter = new ArrayAdapter(UserinterfaceActivity.this, android.R.layout.simple_list_item_1, list);
                     listView.setAdapter(listAdapter);
                     listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
